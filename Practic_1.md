@@ -1,6 +1,6 @@
 ## Задание 1
 
-~$ grep -o '^[^:]\*' /etc/passwd | sort
+~$ grep -o '^[^:]*' /etc/passwd | sort
 
 ## Задание 2
 
@@ -35,7 +35,7 @@ echo "Использование: $0 <файл>" >&2
 exit 1
 fi
 
-grep -oE '[a-zA-Z\_][a-zA-Z0-9_]\*' "$1" | sort -u | xargs
+grep -oE '[a-zA-Z\_][a-zA-Z0-9_]*' "$1" | sort -u | xargs
 
 ~$ nano hello.c
 
@@ -74,7 +74,7 @@ chmod +x "$target" && sudo cp "$target" /usr/local/bin/
 
 #!/usr/bin/env bash
 
-for file in \*.{c,js,py}; do
+for file in *.{c,js,py}; do
 [[-f "$file"]] || continue
 
     first_line=$(head -n 1 "$file")
@@ -150,8 +150,8 @@ echo "Использование: $0 <директория> <расширени�
 exit 1
 fi
 
-archive="archive\_${ext}.tar"
-find "$dir" -type f -name "\*.$ext" -print0 | tar -cvf "$archive" --null -T -
+archive="archive_${ext}.tar"
+find "$dir" -type f -name "*.$ext" -print0 | tar -cvf "$archive" --null -T -
 
 -$ chmod +x task8.sh
 ~$ mkdir -p task8/subfolder
