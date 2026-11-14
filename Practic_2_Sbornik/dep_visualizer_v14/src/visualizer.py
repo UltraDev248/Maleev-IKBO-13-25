@@ -270,6 +270,42 @@ def _calculate_node_positions(
     return positions
 
 
+def _build_svg_edges(
+    graph: dict[str, list[str]], coords: dict[str, tuple[int, int]]
+) -> list[str]:
+    """Формирование SVG-элементов линий связей между узлами графа."""
+    edges: list[str] = []
+    for src_pkg, deps in graph.items():
+        if src_pkg not in coords:
+            continue
+        x1, y1 = coords[src_pkg]
+        for dst_pkg in deps:
+            if dst_pkg in coords:
+                x2, y2 = coords[dst_pkg]
+                edges.append(
+                    f'  <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+                    f'stroke="#555" stroke-width="2" '
+                    f'marker-end="url(#arrow)" />'
+                )
+    return edges
+
+
+def _build_svg_nodes(coords: dict[str, tuple[int, int]]) -> list[str]:
+    """Формирование SVG-элементов окружностей и подписей узлов графа."""
+    nodes: list[str] = []
+    for node, (pos_x, pos_y) in coords.items():
+        nodes.append(
+            f'  <circle cx="{pos_x}" cy="{pos_y}" r="{NODE_RADIUS}" '
+            f'fill="#E3F2FD" stroke="#1565C0" stroke-width="2" />'
+        )
+        nodes.append(
+            f'  <text x="{pos_x}" y="{pos_y + 4}" '
+            f'font-size="{FONT_SIZE}" text-anchor="middle" '
+            f'font-family="sans-serif">{node}</text>'
+        )
+    return nodes
+
+
 def save_graph_to_svg(
     graph: dict[str, list[str]], root: str, output_path: str
 ) -> None:
@@ -285,31 +321,10 @@ def save_graph_to_svg(
         "    </marker>",
         "  </defs>",
     ]
-
-    for src_pkg, deps in graph.items():
-        if src_pkg not in coords:
-            continue
-        x1, y1 = coords[src_pkg]
-        for dst_pkg in deps:
-            if dst_pkg in coords:
-                x2, y2 = coords[dst_pkg]
-                svg_elements.append(
-                    f'  <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-                    f'stroke="#555" stroke-width="2" '
-                    f'marker-end="url(#arrow)" />'
-                )
-
-    for node, (pos_x, pos_y) in coords.items():
-        svg_elements.append(
-            f'  <circle cx="{pos_x}" cy="{pos_y}" r="{NODE_RADIUS}" '
-            f'fill="#E3F2FD" stroke="#1565C0" stroke-width="2" />'
-        )
-        svg_elements.append(
-            f'  <text x="{pos_x}" y="{pos_y + 4}" font-size="{FONT_SIZE}" '
-            f'text-anchor="middle" font-family="sans-serif">{node}</text>'
-        )
-
+    svg_elements.extend(_build_svg_edges(graph, coords))
+    svg_elements.extend(_build_svg_nodes(coords))
     svg_elements.append("</svg>")
+
     with open(output_path, "w", encoding="utf-8") as file:
         file.write("\n".join(svg_elements))
 
