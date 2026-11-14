@@ -1,0 +1,5 @@
+ls
+cd "my folder with spaces"
+bad_command_example 123
+cd test
+ls

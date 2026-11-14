@@ -1,0 +1,8 @@
+ls
+cd "my folder with spaces"
+ls
+cd ..
+cd test
+ls
+cd /
+ls
